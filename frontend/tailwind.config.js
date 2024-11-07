@@ -7,6 +7,15 @@ export default {
   ],
   theme: {
   	extend: {
+      keyframes: {
+        'float': {
+          '0%, 100%': {translate: '0px 0px'},
+          '50%': {translate: '0px 6px'},
+        }
+      },
+      animation: {
+        float: 'float 2s ease-in-out infinite'
+      },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
