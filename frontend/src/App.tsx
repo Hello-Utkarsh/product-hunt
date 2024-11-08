@@ -1,41 +1,45 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Bell, Tag } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom';
+import { SignInButton, useSession } from '@clerk/clerk-react';
 
 function App() {
   const [backgroundDivs, setBackgroundDivs] = useState([])
+  const session = useSession()
+  const navigate = useNavigate()
   const coordinates = [
-    { top: 5, left: 20 },
+    { top: 5, left: 23 },
     { top: 11, left: 45 },
-    { top: 25, left: 76 },
-    { top: 26, left: 55 },
-    { top: 45, left: 86 },
+    { top: 25, left: 72 },
+    // { top: 26, left: 55 },
+    { top: 45, left: 80 },
     { top: 83, left: 17 },
-    { top: 68, left: 34 },
+    // { top: 68, left: 34 },
     { top: 72, left: 80 },
     { top: 87, left: 58 },
     { top: 10, left: 78 },
-    { top: 20, left: 4 },
-    { top: 27, left: 25 },
-    { top: 41, left: 5 },
-    { top: 73, left: 50 },
-    { top: 64, left: 6 },
+    { top: 17, left: 2 },
+    // { top: 25, left: 28 },
+    { top: 39, left: 5 },
+    { top: 73, left: 38 },
+    { top: 66, left: 6 },
     { top: 70, left: 7 },
     { top: 84, left: 70 }
   ];
 
   const label = [[["Headphone", "$60 — 50% off 🎧"], 'floating_product_tag'],
-  ["Hot Price Drop: MacBook Air now $799!", 'floating_element'],
-  [["💸 Camera Gear:", "Lenses from $199"], 'floating_product_tag'],
-  ["Just in! Smartwatch $120 -40%", 'floating_element'],
-  [["Laptop Blowout:", "Just $450 💻"], 'floating_product_tag'],
+  [["Hot Price Drop:", "MacBook Air now $799!"], 'floating_product_tag'],
   ["Grab It Fast! 🎮 Gaming Console $299", 'floating_element'],
-  [["Limited Deal:", "Earbuds $25"], 'floating_product_tag'],
+  // ["Just in! Smartwatch $120 -40%", 'floating_element'],
   ["50% Off Keyboard — Only $45!", 'notification'],
+  [["💸 Camera Gear:", "Lenses from $199"], 'floating_product_tag'],
+  // [["Limited Deal:", "Earbuds $25"], 'floating_product_tag'],
+  [["Laptop Blowout:", "Just $450 💻"], 'floating_product_tag'],
   ["⏳ Time-Sensitive Offers!", 'notification'],
   ["Deal Alert 🚨: Fitness Tracker $60", 'notification'],
   ["Save Now! Portable Speaker $30", 'floating_element'],
-  ["Ultimate Bargain: Monitor at $110", 'floating_element'],
+  // ["Ultimate Bargain: Monitor at $110", 'floating_element'],
   ["Flash Sale: Chromebook $220 📱", 'floating_element'],
   ["Trending Discount: Gaming Mouse $30", 'floating_element'],
   ["Power Bank $15 ⚡️ Limited Time!", 'notification']]
@@ -44,7 +48,7 @@ function App() {
     return (
       <p
         key={`label-${index}`}
-        className={`flex absolute animate-float items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-yellow-400 text-gray-900`}
+        className={`flex absolute opacity-85 animate-float items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-yellow-400 text-gray-900`}
         style={{ top: `${top}%`, left: `${left}%` }}
       >
         <Bell className="h-5 w-5 mr-2" />
@@ -57,7 +61,7 @@ function App() {
     return (
       <p
         key={`label-${index}`}
-        className={`flex absolute animate-float delay-500 items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-white text-teal-600`}
+        className={`flex absolute opacity-80 animate-float delay-500 items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-white text-teal-600`}
         style={{ top: `${top}%`, left: `${left}%` }}
       >
         {text}
@@ -69,7 +73,7 @@ function App() {
     return (
       <p
         key={`label-${index}`}
-        className={`flex absolute animate-float delay-200 items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-white text-teal-600`}
+        className={`flex absolute opacity-85 animate-float delay-200 items-center w-fit rounded-xl px-2 py-1 z-10 font-medium bg-white text-teal-600`}
         style={{ top: `${top}%`, left: `${left}%` }}
       >
         <Tag className="h-5 w-5 mr-2" />
@@ -85,6 +89,9 @@ function App() {
   };
 
   useEffect(() => {
+    if (session.isSignedIn) {
+      navigate('/dashboard')        
+  }
     const divs: any = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       size: Math.random() * 60 + 20,
@@ -97,9 +104,6 @@ function App() {
     <div className='h-screen bg-teal-600 flex justify-center items-center text-white'>
       {label.map((x: (string | string[])[], index: number) => {
         const { top, left } = coordinates[index];
-
-
-
         return div_function[x[1] as string](index, top, left, x[0]);
       })}
       {backgroundDivs.map((div: any) => (
@@ -116,11 +120,15 @@ function App() {
         />
       ))}
       <div className='flex flex-col justify-center items-center z-20'>
-        <h1 className="text-5xl md:text-7xl font-bold text-center mb-6">
-          Track Prices, <span className="text-yellow-300">Save Big</span>
+        <h1 className="text-6xl font-bold text-center mb-2">
+          Product-<span className="text-yellow-300">Hunter</span>
         </h1>
-        <p className='text-2xl text-pretty mx-auto'>Set alerts for your favorite products and never miss a price drop. Shop smarter, save more.</p>
-        <button className='px-3 py-1 bg-yellow-400 text-black rounded-xl mt-2 text-xl'>Get Started</button>
+        <p className='text-2xl mt-2 text-center mx-auto'>Set alerts for your favorite products and never miss a price drop. <br /> Shop smarter, save more.</p>
+        <SignInButton>
+          <button className='px-3 py-1 bg-yellow-400 text-black rounded-xl mt-2 text-xl'>
+            Get Started
+          </button>
+        </SignInButton>
       </div>
     </div>
   )
