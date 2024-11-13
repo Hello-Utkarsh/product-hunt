@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Bell, Tag } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SignInButton, useSession } from '@clerk/clerk-react';
 
 function App() {
