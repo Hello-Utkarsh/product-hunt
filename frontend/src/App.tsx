@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { Bell, Tag } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
-import { SignInButton, useSession } from '@clerk/clerk-react';
+import { SignInButton, useUser } from '@clerk/clerk-react';
 
 function App() {
   const [backgroundDivs, setBackgroundDivs] = useState([])
-  const session = useSession()
   const navigate = useNavigate()
+  const user = useUser()
+  
   const coordinates = [
     { top: 5, left: 23 },
     { top: 11, left: 45 },
@@ -89,9 +90,9 @@ function App() {
   };
 
   useEffect(() => {
-    if (session.isSignedIn) {
-      navigate('/dashboard')        
-  }
+    if (user.isSignedIn) {
+      navigate('/dashboard')
+    }
     const divs: any = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       size: Math.random() * 60 + 20,
@@ -99,7 +100,7 @@ function App() {
       left: `${Math.random() * 95}%`
     }))
     setBackgroundDivs(divs)
-  }, [])
+  }, [user.user?.id])
   return (
     <div className='h-screen bg-teal-600 flex justify-center items-center text-white'>
       {label.map((x: (string | string[])[], index: number) => {

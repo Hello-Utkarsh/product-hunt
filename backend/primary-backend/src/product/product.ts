@@ -5,9 +5,9 @@ const express = require("express");
 const products = express.Router();
 
 products.get("/get-product/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (!id) {
-    return res.send("Please provide productId").status(404);
+  const id = req.params;
+  if (!id || id == undefined) {
+    return res.status(400).json({ message: "Please provide productId" });
   }
   const product = await prisma.product.findFirst({
     where: {
@@ -21,66 +21,61 @@ products.get("/get-product/:id", async (req: Request, res: Response) => {
 });
 
 products.get("/user-products/:id", async (req: Request, res: Response) => {
-  const { user_id } = req.params;
-  if (!user_id) {
-    return res.send("Please provide user id").status(404);
+  const { id } = req.params;
+  if (!id || id == undefined) {
+    return res.status(400).json({ message: "Please provide user id" });
   }
   const user_products = await prisma.product.findMany({
     where: {
-      user: user_id,
+      user: id,
     },
   });
-  return res.json(user_products);
+  if (user_products) {
+    return res.json(user_products);
+  }
+  return res.status(400).json({ message: "Please try again" });
 });
 
 products.post("/create", async (req: Request, res: Response) => {
   const { name, product_url, price, source, user } = req.body;
   if (!name || !product_url || !price || !source || !user) {
-    return res.send("Please provide the required creds").status(404);
+    return res
+      .status(400)
+      .json({ message: "Please provide the required data" });
   }
   const create_prod = await prisma.product.create({
     data: {
       name,
       product_url,
+      price,
       source,
       user,
     },
   });
   if (create_prod) {
-    return res.send("success");
+    return res.json(create_prod).status(200);
   }
-  return res.send("Please try again").status(404);
+  return res.status(400).json({ message: "Please try again" });
 });
 
 products.delete("/delete/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  if (!id) {
-    return res.send("Please provide product id").status(404);
+  const { userid } = req.headers;
+  if (!id || !userid) {
+    return res
+      .status(400)
+      .json({ message: "Please provide the required data" });
   }
   const del_prod = await prisma.product.delete({
     where: {
       id: Number(id),
+      user: Array.isArray(userid) ? "" : userid,
     },
   });
   if (del_prod) {
-    return res.send("success");
+    return res.status(200).json(del_prod);
   }
-  return res.send("Please try again").status(404);
+  return res.status(400).json({ message: "Please try again" });
 });
 
-products.put("/update/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name, source, product_url } = req.body;
-  const update = await prisma.product.update({
-    where: { id: Number(id) },
-    data: {
-      name,
-      source,
-      product_url,
-    },
-  });
-  if (update) {
-    return res.send('updated successfully')
-  }
-  return res.send('Please try again').status(404)
-});
+export default products;

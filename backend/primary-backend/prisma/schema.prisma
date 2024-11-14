@@ -18,5 +18,6 @@ model Product {
   name        String
   user        String
   product_url String
+  price       String
   source      String
 }
