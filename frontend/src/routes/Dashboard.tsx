@@ -1,22 +1,12 @@
-import { SignedIn, SignedOut, SignInButton, UserButton, useSession, useUser } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/clerk-react'
 import { useEffect, useState } from 'react'
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
 import { Check, ChevronsUpDown, ShoppingCart, Tag } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
     Command,
-    CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
@@ -248,88 +238,6 @@ export default function Dashboard() {
                         <Button onClick={() => { submitHunter(hunter) }} className='w-full mt-4' style={{ borderRadius: "6px" }}>Create</Button>
                     </div>
                 </div>
-                {/* <Dialog>
-                    <DialogTrigger className='bg-yellow-400 w-32 px-3 py-1 h-fit text-black rounded-xl z-10 font-medium'>New Hunter</DialogTrigger>
-                    <DialogContent className='bg-teal-600'>
-                        <DialogHeader>
-                            <DialogTitle className='text-white text-2xl font-semibold text-center'>Create a new <span className='text-yellow-400 font-bold text-3xl tracking-wide'>Hunter</span></DialogTitle>
-                            <DialogDescription className='flex flex-col justify-center'>
-                                <div className='flex flex-col mt-4'>
-                                    <label htmlFor="" className='text-white font-medium'>Name</label>
-                                    <input name='name' onChange={(e) => setHunter((prev) => ({
-                                        ...prev,
-                                        "name": e.target.value
-                                    }))} type="text" placeholder='Laptop...' className='px-2 py-1 mt-1 bg-teal-500 text-white placeholder-white' style={{ borderRadius: "8px" }} />
-                                </div>
-                                <div className='flex flex-col mt-4'>
-                                    <label htmlFor="" className='text-white font-medium'>Url</label>
-                                    <input type="url" placeholder='https://www.flip...' onChange={(e) => setHunter((prev) => ({
-                                        ...prev,
-                                        'product_url': e.target.value
-                                    }))} className='px-2 py-1 mt-1 bg-teal-500 text-white placeholder-white' style={{ borderRadius: "8px" }} />
-                                </div>
-                                <div className='flex justify-between mt-4 items-end'>
-                                    <div className='flex flex-col'>
-                                        <label htmlFor="" className='text-white font-medium'>Price</label>
-                                        <input type="number" placeholder='999' onChange={(e) => setHunter((prev) => ({
-                                            ...prev,
-                                            'price': e.target.value
-                                        }))} className='px-2 py-1 mt-1 bg-teal-500 text-white placeholder-white' style={{ borderRadius: "8px" }} />
-                                    </div>
-                                    <Popover open={open} onOpenChange={setOpen}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                role="combobox"
-                                                aria-expanded={open}
-                                                className="w-[200px] justify-between bg-teal-500 text-white hover:bg-teal-600"
-                                                style={{ borderRadius: "8px" }}
-                                            >
-                                                {value
-                                                    ? options.find((option) => option.value === value)?.label
-                                                    : "Select platform..."}
-                                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-[200px] p-0">
-                                            <Command className='bg-teal-400'>
-                                                <CommandList>
-                                                    <CommandGroup>
-                                                        {options.map((option) => (
-                                                            <CommandItem
-                                                                className='hover:bg-teal-500 data-[selected=true]:bg-teal-500'
-                                                                key={option.value}
-                                                                value={option.value}
-                                                                onSelect={(currentValue) => {
-                                                                    setValue(currentValue === value ? "" : currentValue)
-                                                                    setHunter((prev) => ({
-                                                                        ...prev,
-                                                                        'source': currentValue
-                                                                    }))
-                                                                    setOpen(false)
-                                                                }}
-                                                            >
-                                                                <Check
-                                                                    className={cn(
-                                                                        "mr-2 h-4 w-4",
-                                                                        value === option.value ? "opacity-100" : "opacity-0"
-                                                                    )}
-                                                                />
-                                                                {option.label}
-                                                            </CommandItem>
-                                                        ))}
-                                                    </CommandGroup>
-                                                </CommandList>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-                                <button onClick={() => { submitHunter(hunter) }} className='bg-yellow-400 px-3 py-1 font-medium rounded-xl text-base mx-auto mt-4 text-black' style={{ borderRadius: "8px" }}>Create</button>
-                            </DialogDescription>
-                        </DialogHeader>
-                    </DialogContent>
-                </Dialog> */}
-
             </div>
             {backgroundDivs.map((div: any) => (
                 <div
