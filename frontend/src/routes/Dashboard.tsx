@@ -23,7 +23,7 @@ import { Toaster } from '@/components/ui/toaster'
 export default function Dashboard() {
     const [backgroundDivs, setBackgroundDivs] = useState([])
     const [open, setOpen] = useState(false)
-    const [userHunter, setUserHunters] = useState<{ id: number, user: string, name: string, product_url: string, source: string, price: string }[]>()
+    const [userHunter, setUserHunters] = useState<{ id: number, user: string, name: string, product_url: string, source: string, price: string, decreasedPrice?: string }[]>()
     const [hunter, setHunter] = useState<{ name: string, product_url: string, source: string, price: string }>({ name: "", product_url: "", source: "", price: "" })
     const [value, setValue] = useState("")
     const user = useUser()
@@ -101,7 +101,7 @@ export default function Dashboard() {
                 }
                 setUserHunters((prev = []) => [...prev, res])
             } catch (error: any) {
-                toast({description: error.message})
+                toast({ description: error.message })
             }
         }
     }
@@ -122,7 +122,7 @@ export default function Dashboard() {
                 }
                 setUserHunters((prev = []) => [...prev?.filter((x) => x.id != res.id)])
             } catch (error: any) {
-                toast({description: error.message})
+                toast({ description: error.message })
             }
         }
 
@@ -146,17 +146,23 @@ export default function Dashboard() {
             <div className='px-4 py-6 flex justify-between gap-4'>
                 <div className='grid grid-cols-3 gap-10'>
                     {userHunter && userHunter.map((x) => {
+                        const decreased = (x.decreasedPrice && x.decreasedPrice < x.price) ? x.decreasedPrice : undefined
                         return (
                             <div key={`product-${x.id}`} className='bg-teal-700 relative px-3 py-2' style={{ borderRadius: "4px" }}>
                                 <div className='flex justify-between px-2'>
                                     <h3 className='text-lg'>{x.name}</h3>
                                     <span className='bg-yellow-400 px-2 py-1 rounded-xl text-sm font-medium text-black'>{x.source}</span>
                                 </div>
-                                <span className='flex items-center text-2xl font-semibold mb-3 tracking-tight mt-2 px-2'>
-                                    <Tag className='h-6 mr-2 mt-1' />
-                                    {x.price}
+                                <span className='flex items-center mt-2 mb-3'>
+                                    <Tag className='h-6 mt-1 ml-2 mr-1' style={decreased ? { color: '#facc15' } : undefined} />
+                                    {decreased && <p className='text-3xl font-bold text-yellow-400 mr-2'>
+                                        {decreased}
+                                    </p>}
+                                    <span className='flex items-center h-full font-semibold tracking-tight' style={decreased ? { textDecoration: 'line-through', fontSize: '18px' } : { fontSize: '24px' }}>
+                                        {x.price}
+                                    </span>
                                 </span>
-                                <p className='bg-teal-800 py-1 px-2 mx-2 my-3' style={{ borderRadius: '5px' }}>Looks like there are currently no discounts on this product.</p>
+                                <p className='bg-teal-800 py-1 px-2 mx-2 my-3' style={decreased ? { borderRadius: '5px', padding: "8px 0px", fontSize: "16px", fontWeight: '600' } : { borderRadius: "5px" }}>{decreased ? `🤩🎉It's time! The price has fallen to ${decreased} - grab it now!` : "Looks like there are currently no discounts on this product."}</p>
                                 <div className='flex justify-between'>
                                     <a className='w-full mx-2' href={x.product_url} target='_blank'><Button className='w-full' style={{ borderRadius: "6px" }}>Visit</Button></a>
                                     <Button onClick={() => deleteHunter(x.id)} className='w-full mx-2' variant='destructive' style={{ borderRadius: "6px" }}>Delete</Button>
@@ -252,7 +258,7 @@ export default function Dashboard() {
                     }}
                 />
             ))}
-            <Toaster/>
+            <Toaster />
         </div>
     )
 }
