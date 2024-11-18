@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from search_bots import find_flipkart, find_ajio, find_amazon, find_mintra
 from selenium import webdriver
@@ -14,12 +14,13 @@ async def fetchUrl(data: productDetails):
     driver = webdriver.Chrome()
     driver.maximize_window()
     url, source = data.url, data.source
-    print(source)
     searchSource = {"flipkart": find_flipkart, "amazon": find_amazon, "mintra": find_mintra, "ajio": find_ajio}
-    for i in range(5):
+    for i in range(2):
+        print(i, "scrapper backend")
         try:
             currentPrice = searchSource[source](driver, url)
             if currentPrice:
                 return {"currentPrice": currentPrice}
         except:
-            continue
+            if i == 1:
+                raise HTTPException(status_code=403,detail="Blocked")

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import products from "./product/product";
 import { fetchProducts } from "./scheduler/scheduler";
+require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();

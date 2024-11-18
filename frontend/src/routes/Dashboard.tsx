@@ -26,6 +26,7 @@ export default function Dashboard() {
     const [userHunter, setUserHunters] = useState<{ id: number, user: string, name: string, product_url: string, source: string, price: string, decreasedPrice?: string }[]>()
     const [hunter, setHunter] = useState<{ name: string, product_url: string, source: string, price: string }>({ name: "", product_url: "", source: "", price: "" })
     const [value, setValue] = useState("")
+    const [loading, setLoading] = useState(false)
     const user = useUser()
     const { toast } = useToast()
     const navigate = useNavigate()
@@ -66,6 +67,7 @@ export default function Dashboard() {
     const fetchUserHunters = async () => {
         if (user.user?.emailAddresses[0].emailAddress) {
             try {
+                setLoading(true)
                 const req = await fetch(`${import.meta.env.VITE_PORT}/product/user-products/${user.user?.emailAddresses[0].emailAddress}`, {
                     method: 'GET',
                     headers: {
@@ -77,8 +79,10 @@ export default function Dashboard() {
                     throw new Error(res.message)
                 }
                 setUserHunters(res)
+                setLoading(false)
             } catch (error: any) {
-                console.log(error.message)
+                setLoading(false)
+                toast({ description: "Please reload the page" })
             }
         }
     }
@@ -86,6 +90,7 @@ export default function Dashboard() {
     const submitHunter = async ({ name, product_url, source, price }: { name: string, product_url: string, source: string, price: string }) => {
         if (user.user?.emailAddresses[0].emailAddress) {
             try {
+                setLoading(true)
                 const req = await fetch(`${import.meta.env.VITE_PORT}/product/create`, {
                     method: 'POST',
                     headers: {
@@ -100,7 +105,9 @@ export default function Dashboard() {
                     throw new Error(res.message)
                 }
                 setUserHunters((prev = []) => [...prev, res])
+                setLoading(false)
             } catch (error: any) {
+                setLoading(false)
                 toast({ description: error.message })
             }
         }
@@ -146,7 +153,8 @@ export default function Dashboard() {
             <div className='px-4 py-6 flex justify-between gap-4'>
                 <div className='grid grid-cols-3 gap-10'>
                     {userHunter && userHunter.map((x) => {
-                        const decreased = (x.decreasedPrice && x.decreasedPrice < x.price) ? x.decreasedPrice : undefined
+                        // x.decreasedPrice = 16000
+                        const decreased = (x.decreasedPrice && Number(x.decreasedPrice) < Number(x.price)) ? x.decreasedPrice : undefined
                         return (
                             <div key={`product-${x.id}`} className='bg-teal-700 relative px-3 py-2' style={{ borderRadius: "4px" }}>
                                 <div className='flex justify-between px-2'>
@@ -162,7 +170,7 @@ export default function Dashboard() {
                                         {x.price}
                                     </span>
                                 </span>
-                                <p className='bg-teal-800 py-1 px-2 mx-2 my-3' style={decreased ? { borderRadius: '5px', padding: "8px 0px", fontSize: "16px", fontWeight: '600' } : { borderRadius: "5px" }}>{decreased ? `🤩🎉It's time! The price has fallen to ${decreased} - grab it now!` : "Looks like there are currently no discounts on this product."}</p>
+                                <p className='bg-teal-800 py-1 px-2 mx-2 my-3' style={decreased ? { borderRadius: '5px', padding: "8px 10px", fontSize: "16px", fontWeight: '600' } : { borderRadius: "5px" }}>{decreased ? `🤩🎉It's time! The price has fallen to ${decreased} - grab it now!` : "Looks like there are currently no discounts on this product."}</p>
                                 <div className='flex justify-between'>
                                     <a className='w-full mx-2' href={x.product_url} target='_blank'><Button className='w-full' style={{ borderRadius: "6px" }}>Visit</Button></a>
                                     <Button onClick={() => deleteHunter(x.id)} className='w-full mx-2' variant='destructive' style={{ borderRadius: "6px" }}>Delete</Button>
@@ -170,8 +178,23 @@ export default function Dashboard() {
                             </div>
                         )
                     })}
+                    {loading && <div className='bg-teal-700 relative px-3 py-2' style={{ borderRadius: "4px" }}>
+                        <div className='flex justify-between items-center px-2 animate-pulse'>
+                            <div className='w-3/5 bg-teal-800 h-10' style={{ borderRadius: '5px' }} />
+                            <div className='w-1/5 h-7 bg-teal-800' style={{ borderRadius: '5px' }} />
+                        </div>
+                        <div className='flex items-center mt-2 mb-3'>
+                            <Tag className='h-6 mt-1 ml-2 mr-1' />
+                            <span className='w-1/5 h-7 bg-teal-800 animate-pulse' style={{ borderRadius: '5px' }} />
+                        </div>
+                        <div className='bg-teal-800 animate-pulse py-1 px-2 mx-2 my-3 w-10/12 h-12' style={{ borderRadius: '5px' }} />
+                        <div className='flex justify-between'>
+                            <a className='w-full mx-2' target='_blank'><Button className='w-full' style={{ borderRadius: "6px" }}>Visit</Button></a>
+                            <Button className='w-full mx-2' variant='destructive' style={{ borderRadius: "6px" }}>Delete</Button>
+                        </div>
+                    </div>}
                     <div className='bg-teal-700 relative px-3 py-2' style={{ borderRadius: '5px' }}>
-                        <div className='flex justify-between px-2'>
+                        <div className='flex justify-between items-center px-2'>
                             <h2 className='text-white text-xl tracking-tight font-semibold text-center'>Create a new <span className='text-yellow-400 font-bold text-2xl tracking-wide'>Hunter</span></h2>
                             <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild>
